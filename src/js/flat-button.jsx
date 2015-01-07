@@ -1,7 +1,6 @@
-var React = require('react'),
-  Classable = require('./mixins/classable.js'),
-  EnhancedButton = require('./enhanced-button.jsx'),
-  Ripple = require('./ripple.jsx');
+var React = require('react');
+var Classable = require('./mixins/classable.js');
+var EnhancedButton = require('./enhanced-button.jsx');
 
 var FlatButton = React.createClass({
 
@@ -10,37 +9,28 @@ var FlatButton = React.createClass({
   propTypes: {
     className: React.PropTypes.string,
     label: React.PropTypes.string.isRequired,
-    onTouchTap: React.PropTypes.func,
-    primary: React.PropTypes.bool
+    primary: React.PropTypes.bool,
+    secondary: React.PropTypes.bool
   },
 
   render: function() {
-    var 
-      {
-        className,
-        onTouchTap,
+    var {
+        label,
+        primary,
+        secondary,
         ...other
-      } = this.props,
-      classes = this.getClasses('mui-flat-button', {
-        'mui-is-primary': this.props.primary
-      });
+      } = this.props;
+    var classes = this.getClasses('mui-flat-button', {
+      'mui-is-primary': primary,
+      'mui-is-secondary': !primary && secondary
+    });
 
     return (
       <EnhancedButton {...other}
-        className={classes}
-        onTouchTap={this._onTouchTap}>
-
-        <Ripple ref="ripple" className="mui-flat-button-ripple" />
-        <Ripple className="mui-flat-button-focus-ripple" />
-        {this.props.label}
-
+        className={classes}>
+        <span className="mui-flat-button-label">{label}</span>
       </EnhancedButton>
     );
-  },
-
-  _onTouchTap: function(e) {
-    if (!this.props.disabled) this.refs.ripple.animate(e);
-    if (this.props.onTouchTap) this.props.onTouchTap(e);
   }
 
 });

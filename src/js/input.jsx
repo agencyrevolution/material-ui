@@ -1,24 +1,20 @@
 /** @jsx React.DOM */
 
-var React = require('react');
+var React = require('react/addons');
 var Classable = require('./mixins/classable.js');
+var classSet = React.addons.classSet;
 
 var Input = React.createClass({
 
   propTypes: {
     multiline: React.PropTypes.bool,
-    required: React.PropTypes.bool,
     inlinePlaceholder: React.PropTypes.bool,
     rows: React.PropTypes.number,
-    min: React.PropTypes.number,
-    max: React.PropTypes.number,
-    step: React.PropTypes.number,
     inputStyle: React.PropTypes.string,
     error: React.PropTypes.string,
     description: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     type: React.PropTypes.string,
-    name: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func
   },
 
@@ -34,38 +30,51 @@ var Input = React.createClass({
   getDefaultProps: function() {
     return {
       multiline: false,
-      required: true,
       type: "text"
     };
-  },
-
-  setError: function(error) {
-    this.setProps({ error: error });
-  },
-
-  removeError: function() {
-    this.setProps({error: undefined});
   },
 
   render: function() {
     var classes = this.getClasses('mui-input', {
       'mui-floating': this.props.inputStyle === 'floating',
       'mui-text': this.props.type === 'text',
-      'mui-error': this.props.error !== undefined && this.props.error !== null
-    }),
-    placeholder = this.props.inlinePlaceholder ? this.props.placeholder : "",
-    inputElement = this.props.multiline ?
+      'mui-error': this.props.error || false,
+      'mui-disabled': !!this.props.disabled,
+    });
+    var placeholder = this.props.inlinePlaceholder ? this.props.placeholder : "";
+    var inputIsNotEmpty = !!this.state.value;
+    var inputClassName = classSet({
+      'mui-is-not-empty': inputIsNotEmpty
+    });
+    var textareaClassName = classSet({
+      'mui-input-textarea': true,
+      'mui-is-not-empty': inputIsNotEmpty
+    });
+    var inputElement = this.props.multiline ?
       this.props.valueLink ?
-        <textarea {...this.props} className="mui-input-textarea" placeholder={placeholder}
+        <textarea {...this.props} ref="input" 
+          className={textareaClassName} 
+          placeholder={placeholder}
           rows={this.state.rows} /> :
-        <textarea {...this.props} value={this.state.value} className="mui-input-textarea"
-          placeholder={placeholder} rows={this.state.rows} onChange={this._onTextAreaChange} /> :
+        <textarea {...this.props} ref="input" 
+          value={this.state.value} 
+          className={textareaClassName}
+          placeholder={placeholder} 
+          rows={this.state.rows} 
+          onChange={this._onTextAreaChange} /> :
         this.props.valueLink ?
-          <input {...this.props} ref="input" placeholder={placeholder} /> :
-          <input {...this.props} ref="input" value={this.state.value} placeholder={placeholder}
-            onChange={this._onInputChange} />
-    placeholderSpan = this.props.inlinePlaceholder ? null : <span className="mui-input-placeholder"
-      onClick={this._onPlaceholderClick}>{this.props.placeholder}</span>;
+          <input {...this.props} ref="input" 
+            className={inputClassName} 
+            placeholder={placeholder} /> :
+          <input {...this.props} ref="input"
+            className={inputClassName} 
+            value={this.state.value} 
+            placeholder={placeholder}
+            onChange={this._onInputChange} />;
+    var placeholderSpan = this.props.inlinePlaceholder ? null : 
+      <span className="mui-input-placeholder" onClick={this._onPlaceholderClick}>
+        {this.props.placeholder}
+      </span>;
 
     return (
       <div ref={this.props.ref} className={classes}>
@@ -79,20 +88,12 @@ var Input = React.createClass({
     );
   },
 
-  getValue: function() {
-    return this.state.value;
-  },
-
-  setValue: function(txt) {
-    this.setState({value: txt});
-  },
-
-  clearValue: function() {
-    this.setValue("");
+  blur: function() {
+    if(this.isMounted()) this.refs.input.getDOMNode().blur();
   },
   
-  focus: function () {
-    if(this.isMounted()) this.refs.input.getDOMNode().focus();
+  focus: function() {
+    if (this.isMounted()) this.refs.input.getDOMNode().focus();
   },
 
   _onInputChange: function(e) {
@@ -111,10 +112,11 @@ var Input = React.createClass({
   },
 
   _onLineBreak: function(e) {
-    var input = (e.target.value.slice(-1));
+    var value = e.target.value;
+    var lines = value.split('\n').length;
 
-    if(input.match(/\n/gm)) {
-      if(this.state.rows != 20) {
+    if (lines > this.state.rows) {
+      if (this.state.rows !== 20) {
         this.setState({ rows: ((this.state.rows) + 1)});
       }
     }

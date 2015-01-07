@@ -1,10 +1,8 @@
-var React = require('react'),
-  CssEvent = require('./utils/css-event.js'),
-  Classable = require('./mixins/classable.js'),
-  EnhancedButton = require('./enhanced-button.jsx'),
-  Icon = require('./icon.jsx'),
-  Paper = require('./paper.jsx'),
-  Ripple = require('./ripple.jsx');
+var React = require('react');
+var Classable = require('./mixins/classable.js');
+var EnhancedButton = require('./enhanced-button.jsx');
+var Icon = require('./icon.jsx');
+var Paper = require('./paper.jsx');
 
 var RaisedButton = React.createClass({
 
@@ -14,7 +12,12 @@ var RaisedButton = React.createClass({
     className: React.PropTypes.string,
     icon: React.PropTypes.string.isRequired,
     mini: React.PropTypes.bool,
-    onTouchTap: React.PropTypes.func
+    onMouseDown: React.PropTypes.func,
+    onMouseUp: React.PropTypes.func,
+    onMouseOut: React.PropTypes.func,
+    onTouchEnd: React.PropTypes.func,
+    onTouchStart: React.PropTypes.func,
+    secondary: React.PropTypes.bool
   },
 
   getInitialState: function() {
@@ -27,50 +30,66 @@ var RaisedButton = React.createClass({
 
   render: function() {
     var {
-      className,
       icon,
       mini,
-      onTouchTap,
-      ...other } = this.props,
-      classes = this.getClasses('mui-floating-action-button', {
-        'mui-is-mini': this.props.mini
-      });
+      secondary,
+      ...other } = this.props;
+    var classes = this.getClasses('mui-floating-action-button', {
+      'mui-is-mini': mini,
+      'mui-is-secondary': secondary
+    });
 
     return (
-      <Paper className={classes} innerClassName="mui-floating-action-button-inner" zDepth={this.state.zDepth} circle={true}>
-        <EnhancedButton 
-          {...other}
-          className="mui-floating-action-button-container" 
-          onTouchTap={this._onTouchTap}>
+      <Paper
+        className={classes}
+        innerClassName="mui-floating-action-button-inner"
+        zDepth={this.state.zDepth}
+        circle={true}>
 
-          
-          <Ripple className="mui-floating-action-button-focus-ripple" />
-          <Icon className="mui-floating-action-button-icon" icon={this.props.icon} />
+        <EnhancedButton {...other}
+          className="mui-floating-action-button-container" 
+          onMouseDown={this._handleMouseDown}
+          onMouseUp={this._handleMouseUp}
+          onMouseOut={this._handleMouseOut}
+          onTouchStart={this._handleTouchStart}
+          onTouchEnd={this._handleTouchEnd}>
+
+          <Icon
+            className="mui-floating-action-button-icon"
+            icon={this.props.icon} />
 
         </EnhancedButton>
-        <Ripple ref="ripple" className="mui-floating-action-button-ripple" />
+        
       </Paper>
     );
   },
 
-  _onTouchTap: function(e) {
-    if (!this.props.disabled) this._animateButtonClick(e);
-    if (this.props.onTouchTap) this.props.onTouchTap(e);
+  _handleMouseDown: function(e) {
+    //only listen to left clicks
+    if (e.button === 0) {
+      this.setState({ zDepth: this.state.initialZDepth + 1 });
+    }
+    if (this.props.onMouseDown) this.props.onMouseDown(e);
   },
 
-  _animateButtonClick: function(e) {
-    var el = this.getDOMNode();
+  _handleMouseUp: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseUp) this.props.onMouseUp(e);
+  },
 
-    //animate the ripple
-    this.refs.ripple.animateFromCenter();
+  _handleMouseOut: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onMouseOut) this.props.onMouseOut(e);
+  },
 
-    //animate the zdepth change
+  _handleTouchStart: function(e) {
     this.setState({ zDepth: this.state.initialZDepth + 1 });
-    setTimeout(function() {
-			if (this.isMounted()) {
-				this.setState({zDepth: this.state.initialZDepth});
-			}
-    }.bind(this), 450);
+    if (this.props.onTouchStart) this.props.onTouchStart(e);
+  },
+
+  _handleTouchEnd: function(e) {
+    this.setState({ zDepth: this.state.initialZDepth });
+    if (this.props.onTouchEnd) this.props.onTouchEnd(e);
   }
 
 });

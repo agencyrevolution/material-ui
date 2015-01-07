@@ -28,8 +28,15 @@
 @subheader-border-color: @border-color;
 @subheader-text-color: @primary-1-color;
 
+//Date Picker
+@date-picker-color: @primary-1-color;
+@date-picker-text-color: @white;
+@date-picker-calendar-text-color: @body-text-color;
+@date-picker-select-color: @primary-2-color;
+@date-picker-select-text-color: @white;
+
 // menu
-@menu-background-color: white;
+@menu-background-color: @white;
 @menu-item-data-height: 32px;
 @menu-item-height: 48px;
 @menu-item-hover-color: rgba(0, 0, 0, .035);
@@ -49,8 +56,12 @@
 @flat-button-focus-ripple-color: fade(@flat-button-ripple-color, 7%);
 @flat-button-primary-hover-color: lighten(@accent-1-color, 32%);
 @flat-button-primary-text-color: @accent-1-color;
-@flat-button-primary-ripple-color: fade(darken(@flat-button-primary-text-color, 20%), 10%);
-@flat-button-primary-focus-ripple-color: fade(@flat-button-primary-ripple-color, 7%);
+@flat-button-primary-ripple-color: fade(@flat-button-primary-text-color, 20%);
+@flat-button-primary-focus-ripple-color: fade(@flat-button-primary-ripple-color, 20%);
+@flat-button-secondary-hover-color: lighten(@primary-1-color, 52%);
+@flat-button-secondary-text-color: @primary-1-color;
+@flat-button-secondary-ripple-color: fade(@flat-button-secondary-text-color, 20%);
+@flat-button-secondary-focus-ripple-color: fade(@flat-button-secondary-ripple-color, 20%);
 @flat-button-disabled-text-color: fade(@flat-button-text-color, 30%);
 
 @raised-button-color: @white;
@@ -61,8 +72,13 @@
 @raised-button-primary-color: @accent-1-color;
 @raised-button-primary-hover-color: darken(@accent-1-color, 15%);
 @raised-button-primary-text-color: @white;
-@raised-button-primary-ripple-color: fade(@black, 15%);
+@raised-button-primary-ripple-color: fade(@white, 50%);
 @raised-button-primary-focus-ripple-color: @raised-button-primary-ripple-color;
+@raised-button-secondary-color: @primary-1-color;
+@raised-button-secondary-hover-color: darken(@primary-1-color, 4%);
+@raised-button-secondary-text-color: @white;
+@raised-button-secondary-ripple-color: fade(@white, 35%);
+@raised-button-secondary-focus-ripple-color: @raised-button-secondary-ripple-color;
 @raised-button-disabled-color: @raised-button-hover-color;
 @raised-button-disabled-text-color: fade(@raised-button-text-color, 30%);
 
@@ -73,6 +89,11 @@
 @floating-action-button-hover-color: @raised-button-primary-hover-color;
 @floating-action-button-ripple-color: @raised-button-primary-ripple-color;
 @floating-action-button-focus-ripple-color: @raised-button-primary-ripple-color;
+@floating-action-button-secondary-color: @primary-1-color;
+@floating-action-button-secondary-icon-color: @white;
+@floating-action-button-secondary-hover-color: @raised-button-secondary-hover-color;
+@floating-action-button-secondary-ripple-color: @raised-button-secondary-ripple-color;
+@floating-action-button-secondary-focus-ripple-color: @raised-button-secondary-ripple-color;
 @floating-action-button-disabled-color: @raised-button-disabled-color;
 @floating-action-button-disabled-text-color: @raised-button-disabled-text-color;
 
@@ -94,10 +115,10 @@
 @checkbox-box-border-color: black;
 @checkbox-check-color: green;
 
-// toast
-@mui-toast-color: white;
-@mui-toast-background-color: #323232;
-@mui-toast-action-color: yellow;
+// snackbar
+@mui-snackbar-text-color: white;
+@mui-snackbar-background-color: #323232;
+@mui-snackbar-action-color: @accent-1-color;
 
 // toggle
 @toggle-size: 20px;

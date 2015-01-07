@@ -2,7 +2,6 @@ var React = require('react');
 var Classable = require('./mixins/classable.js');
 var EnhancedButton = require('./enhanced-button.jsx');
 var Icon = require('./icon.jsx');
-var Ripple = require('./ripple.jsx');
 var Tooltip = require('./tooltip.jsx');
 
 var IconButton = React.createClass({
@@ -15,7 +14,6 @@ var IconButton = React.createClass({
     icon: React.PropTypes.string.isRequired,
     onBlur: React.PropTypes.func,
     onFocus: React.PropTypes.func,
-    onTouchTap: React.PropTypes.func,
     tooltip: React.PropTypes.string,
     touch: React.PropTypes.bool
   },
@@ -34,11 +32,7 @@ var IconButton = React.createClass({
 
   render: function() {
     var {
-      className,
       icon,
-      onBlur,
-      onFocus,
-      onTouchTap,
       tooltip,
       touch,
       ...other } = this.props;
@@ -50,31 +44,24 @@ var IconButton = React.createClass({
         <Tooltip
           ref="tooltip"
           className="mui-icon-button-tooltip"
-          label={this.props.tooltip}
+          label={tooltip}
           show={this.state.tooltipShown}
-          touch={this.props.touch} />
+          touch={touch} />
       );
     }
 
     return (
       <EnhancedButton {...other}
         ref="button"
+        centerRipple={true}
         className={classes}
         onBlur={this._handleBlur}
         onFocus={this._handleFocus}
-        onTouchTap={this._handleTouchTap}>
+        onMouseOut={this._handleMouseOut}
+        onMouseOver={this._handleMouseOver}>
 
         {tooltip}
-        <div
-          className="mui-icon-button-target"
-          onMouseOut={this._handleMouseOut}
-          onMouseOver={this._handleMouseOver}>
-
-          <Ripple ref="ripple" className="mui-icon-button-ripple" />
-          <Ripple className="mui-icon-button-focus-ripple" />
-          <Icon icon={icon} />
-
-        </div>
+        <Icon icon={icon} />
 
       </EnhancedButton>
     );
@@ -114,11 +101,6 @@ var IconButton = React.createClass({
   _handleMouseOver: function(e) {
     this._showTooltip();
     if (this.props.onMouseOver) this.props.onMouseOver(e);
-  },
-
-  _handleTouchTap: function(e) {
-    if (!this.props.disabled) this.refs.ripple.animateFromCenter();
-    if (this.props.onTouchTap) this.props.onTouchTap(e);
   }
 
 });
