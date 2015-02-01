@@ -1,7 +1,10 @@
 var React = require('react');
+var CssEvent = require('./utils/css-event.js');
 var Classable = require('./mixins/classable.js');
 var EnhancedButton = require('./enhanced-button.jsx');
 var Paper = require('./paper.jsx');
+var Ripple = require('./ripple.jsx');
+var scaffoldStyles = require('./scaffold-styles.js');
 
 var RaisedButton = React.createClass({
 
@@ -10,11 +13,7 @@ var RaisedButton = React.createClass({
   propTypes: {
     className: React.PropTypes.string,
     label: React.PropTypes.string.isRequired,
-    onMouseDown: React.PropTypes.func,
-    onMouseUp: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onTouchEnd: React.PropTypes.func,
-    onTouchStart: React.PropTypes.func,
+    onTouchTap: React.PropTypes.func,
     primary: React.PropTypes.bool,
     secondary: React.PropTypes.bool
   },
@@ -29,56 +28,46 @@ var RaisedButton = React.createClass({
 
   render: function() {
     var {
-      label,
-      primary,
-      secondary,
-      ...other } = this.props;
-    var classes = this.getClasses('mui-raised-button', {
-      'mui-is-primary': primary,
-      'mui-is-secondary': !primary && secondary
-    });
+      className,
+      onTouchTap,
+      ...other } = this.props,
+      classes = this.getClasses('mui-raised-button', {
+        'mui-is-primary': this.props.primary,
+        'mui-is-secondary': !this.props.primary && this.props.secondary
+      });
 
     return (
       <Paper className={classes} zDepth={this.state.zDepth}>
-        <EnhancedButton {...other}
+        <EnhancedButton 
+          {...other}
           className="mui-raised-button-container" 
-          onMouseUp={this._handleMouseUp}
-          onMouseDown={this._handleMouseDown}
-          onMouseOut={this._handleMouseOut}
-          onTouchStart={this._handleTouchStart}
-          onTouchEnd={this._handleTouchEnd}>
-          <span className="mui-raised-button-label">{label}</span>
+          onTouchTap={this._onTouchTap}>
+
+          <Ripple ref="ripple" className="mui-raised-button-ripple" />
+          <Ripple className="mui-raised-button-focus-ripple" />
+          <span style={scaffoldStyles.getRaisedButtonStyles()}>{this.props.label}</span>
+
         </EnhancedButton>
       </Paper>
     );
   },
 
-  _handleMouseDown: function(e) {
-    //only listen to left clicks
-    if (e.button === 0) {
-      this.setState({ zDepth: this.state.initialZDepth + 1 });
-    }
-    if (this.props.onMouseDown) this.props.onMouseDown(e);
+  _onTouchTap: function(e) {
+    if (!this.props.disabled) this._animateButtonClick(e);
+    if (this.props.onTouchTap) this.props.onTouchTap(e);
   },
 
-  _handleMouseUp: function(e) {
-    this.setState({ zDepth: this.state.initialZDepth });
-    if (this.props.onMouseUp) this.props.onMouseUp(e);
-  },
+  _animateButtonClick: function(e) {
+    var el = this.getDOMNode();
 
-  _handleMouseOut: function(e) {
-    this.setState({ zDepth: this.state.initialZDepth });
-    if (this.props.onMouseOut) this.props.onMouseOut(e);
-  },
+    //animate the ripple
+    this.refs.ripple.animate(e);
 
-  _handleTouchStart: function(e) {
+    //animate the zdepth change
     this.setState({ zDepth: this.state.initialZDepth + 1 });
-    if (this.props.onTouchStart) this.props.onTouchStart(e);
-  },
-
-  _handleTouchEnd: function(e) {
-    this.setState({ zDepth: this.state.initialZDepth });
-    if (this.props.onTouchEnd) this.props.onTouchEnd(e);
+    setTimeout(function() {
+      this.setState({ zDepth: this.state.initialZDepth });
+    }.bind(this), 450);
   }
 
 });
