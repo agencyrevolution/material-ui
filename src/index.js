@@ -1,3 +1,4 @@
+var scaffoldStyles = require('./js/scaffold-styles');
 module.exports = {
   AppBar: require('./js/app-bar.jsx'),
   AppCanvas: require('./js/app-canvas.jsx'),
@@ -36,5 +37,8 @@ module.exports = {
     Events: require('./js/utils/events.js'),
     KeyCode: require('./js/utils/key-code.js'),
     KeyLine: require('./js/utils/key-line.js')
+  },
+  defineCustomStyles: function(styles) {
+    scaffoldStyles.update(styles);
   }
 };

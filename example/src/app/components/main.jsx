@@ -2,19 +2,19 @@
 
 var React = require('react'),
   mui = require('material-ui'),
-  RaisedButton = mui.RaisedButton;
+  RaisedButton = mui.RaisedButton,
+  customStyles = require('../custom-styles.js'),
   DatePicker = mui.DatePicker;
 var Main = React.createClass({
 
   render: function() {
-
+    mui.defineCustomStyles(customStyles);
     return (
       <div className="example-page">
 
         <h1>material-ui</h1>
         <h2>example project</h2>
 
-        
 
         <RaisedButton label="Super Secret Password" primary={true} onTouchTap={this._handleTouchTap} />
 
